@@ -116,7 +116,7 @@ def CFG(variables, terminales, rules):
 
                         transition = ''.join(newStri)
                         rules[k] = transition
-                        rules[letra] = letra
+                        rules[letra] = ' '.join(letra)
 
 
     # Paso 3: Eliminar producciones-ℇ
@@ -167,6 +167,7 @@ def CFG(variables, terminales, rules):
             if transition == 'epsilon':
                 rules.pop(i)
 
+
     # Paso 4: Eliminar producciones unarias
     rul = rules.copy()
     for i in rul:
@@ -193,31 +194,38 @@ def CFG(variables, terminales, rules):
         else:
             splitedString = transition.split(' ')
             if len(splitedString) == 1 and transition.isupper():
-                rules.pop(i)
-                for let in variables:
-                    if let == i:
-                        variables.remove(let)
-                for l in rules:
-                    if type(rules[l]) == list:
-                        for k in rules[l]:
-                            if k == i:
-                                k = transition
+                if i != 'S0':
+                    rules.pop(i)
+                    for let in variables:
+                        if let == i:
+                            variables.remove(let)
+                    for l in rules:
+                        if type(rules[l]) == list:
+                            for k in rules[l]:
+                                if k == i:
+                                    k = transition
 
-                    else:
-                        splitedStri = rules[l].split(' ')
-                        for letra in splitedStri:
-                            if letra == i:
-                                index_to_replace = splitedStri.index(letra)
-                                splitedStri[index_to_replace] = transition
-                                
-                        rules[l] = ' '.join(splitedStri)
+                        else:
+                            splitedStri = rules[l].split(' ')
+                            for letra in splitedStri:
+                                if letra == i:
+                                    index_to_replace = splitedStri.index(letra)
+                                    splitedStri[index_to_replace] = transition
+                                    
+                            rules[l] = ' '.join(splitedStri)
+                
+                else:
+                    for l in rules:
+                        if l == transition:
+                            rules[i] = rules[l]
+
 
     # Paso 5: Eliminar producciones inaccesibles
     # Examinar que variables son alcanzables
     rul = rules.copy()
     alcanzables = []
     for i in rul:
-        if i == 'S0':
+        if i == 'S0' or i == 'S':
             alcanzables.append(i)
             if type(rules[i]) == list:
                 for k in rules[i]:
@@ -247,17 +255,25 @@ def CFG(variables, terminales, rules):
     for i in rul:
         if i not in alcanzables:
             rules.pop(i)
+            for l in rules:
+                if type(rules[l]) == list:
+                    for k in rules[l]:
+                        splitedStrin = k.split(' ')
+                        for letra in splitedStrin:
+                            if letra == i:
+                                index_to_replace = splitedString.index(letra)
+                                splitedString.pop(index_to_replace)
+                                rules[l] = ' '.join(splitedStrin)
+                else:
+                    splitedString = rules[l].split(' ')
+                    for letra in splitedString:
+                        if letra == i:
+                            index_to_replace = splitedString.index(letra)
+                            splitedString.pop(index_to_replace)
+                            rules[l] = ' '.join(splitedString)
             for let in variables:
                 if let == i:
                     variables.remove(let)
-        else:
-            if type(rules[i]) == list:
-                for k in rules[i]:
-                    splitedString = k.split(' ')
-                    for letra in splitedString:
-                        if letra not in alcanzables:
-                            rules[i].remove(k)
-                            break
     
 
 
@@ -277,14 +293,29 @@ def main():
     #     'DET': ['a', 'the']
     # }
 
-    variables = ['S',
-                # 'T', 'J'
-                ]
+    # variables = ['S',
+    #             # 'T', 'J'
+    #             ]
+    # terminales = ['a', 'b']
+    # rules = {
+    #     'S': ['a S a', 'b S b', 'a', 'b', 'epsilon'],
+    #     # 'T': ['b S b S', 'epsilon'],
+    #     # 'J': ['a T b'],
+    # }
+
+    # variables = ['S', 'C']
+    # terminales = ['a', 'b']
+    # rules = {
+    #     'S': ['a S', 'a', 'a C b'],
+    #     'C': 'a C b'
+    # }
+
+    variables = ['S', 'A', 'B']
     terminales = ['a', 'b']
     rules = {
-        'S': ['a S a', 'b S b', 'a', 'b', 'epsilon'],
-        # 'T': ['b S b S', 'epsilon'],
-        # 'J': ['a T b'],
+        'S': ['A S A', 'a B', 'b', 'a', 'S A', 'A S'],
+        'A': 'b',
+        'B': 'b',
     }
 
     CFG(variables, terminales, rules)
