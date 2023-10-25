@@ -3,8 +3,16 @@
 def CFG(variables, terminales, rules):
     # Paso 1: Agregar reemplazar paso inicial
     first_key = next(iter(rules))
-    rules['S0'] = first_key
-    variables.append('S0')
+    newRules = {}
+    newRules['S0'] = first_key
+    newRules.update(rules)
+    rules.clear()
+    rules = newRules.copy()
+    newVariables = []
+    newVariables.append('S0')
+    newVariables.extend(variables)
+    variables.clear()
+    variables = newVariables
 
     # Paso 2: BIN
     # Quitar terminales con Variables
@@ -225,28 +233,21 @@ def CFG(variables, terminales, rules):
     rul = rules.copy()
     alcanzables = []
     for i in rul:
-        if i == 'S0' or i == 'S':
+        if i == 'S0':
             alcanzables.append(i)
             if type(rules[i]) == list:
                 for k in rules[i]:
                     splitedString = k.split(' ')
                     for letra in splitedString:
-                        if letra.isupper() and letra not in alcanzables:
-                            alcanzables.append(letra)
-                            for l in rules:
-                                if l == letra:
-                                    if type(rules[l]) == list:
-                                        for ksa in rules[l]:
-                                            splitedStrings = ksa.split(' ')
-                                            for letras in splitedStrings:
-                                                if letras.isupper() and letras not in alcanzables:
-                                                    alcanzables.append(letras)
-                                    else:
-                                        splitedStringe = rules[l].split(' ')
-                                        for letrae in splitedStringe:
-                                            if letrae.isupper() and letrae not in alcanzables:
-                                                alcanzables.append(letrae)
+                        alcanzables = agregarLetras(letra, alcanzables, rules)
+
+            else:
+                splitedString = rules[i].split(' ')
+                for letra in splitedString:
+                    alcanzables = agregarLetras(letra, alcanzables, rules)
     
+
+
     print('Alcanzables')
     print(alcanzables)
 
@@ -274,33 +275,49 @@ def CFG(variables, terminales, rules):
             for let in variables:
                 if let == i:
                     variables.remove(let)
-    
 
+    return variables, rules
+    
+def agregarLetras(letra, alcanzables, rules):
+    if letra.isupper() and letra not in alcanzables:
+        alcanzables.append(letra)
+        for l in rules:
+            if l == letra:
+                if type(rules[l]) == list:
+                    for ksa in rules[l]:
+                        splitedStrings = ksa.split(' ')
+                        for letras in splitedStrings:
+                            if letras.isupper() and letras not in alcanzables:
+                                alcanzables = agregarLetras(letras, alcanzables, rules)
+                else:
+                    splitedStringe = rules[l].split(' ')
+                    for letrae in splitedStringe:
+                        if letrae.isupper() and letrae not in alcanzables:
+                            alcanzables.append(letrae)
+                            alcanzables = agregarLetras(letrae, alcanzables, rules)
+
+    return alcanzables
 
 def main():
-    # variables = ['S', 'VP', 'PP', 'NP', 'V', 'P', 'N', 'Det']
-    # terminales = ['he', 'she', 'cooks', 'drinks', 'eats', 'cuts', 'in', 'with', 'cat', 'dog', 'beer', 'cake', 'juice', 'meat', 'soup', 'fork', 'knife', 'oven', 'spoon', 'a', 'the']
-    # rules = { 
-    #     'S': 'A B',
-    #     'A': 'NP',
-    #     'B': 'VP',
-    #     'VP': ['VP PP', 'V NP', 'cooks', 'drinks', 'eats', 'cuts'],
-    #     'PP': 'P NP',
-    #     'NP': ['DET N', 'he', 'she'],
-    #     'V': ['cooks', 'drinks', 'eats', 'cuts'],
-    #     'P': ['in', 'with'],
-    #     'N': ['cat', 'dog', 'beer', 'cake', 'juice', 'meat', 'soup', 'fork', 'knife', 'oven', 'spoon'],
-    #     'DET': ['a', 'the']
-    # }
+    variables = ['S', 'A', 'B', 'VP', 'PP', 'NP', 'V', 'P', 'N', 'DET']
+    terminales = ['he', 'she', 'cooks', 'drinks', 'eats', 'cuts', 'in', 'with', 'cat', 'dog', 'beer', 'cake', 'juice', 'meat', 'soup', 'fork', 'knife', 'oven', 'spoon', 'a', 'the']
+    rules = { 
+        'S': 'A B',
+        'A': 'NP',
+        'B': 'VP',
+        'VP': ['VP PP', 'V NP', 'cooks', 'drinks', 'eats', 'cuts'],
+        'PP': 'P NP',
+        'NP': ['DET N', 'he', 'she'],
+        'V': ['cooks', 'drinks', 'eats', 'cuts'],
+        'P': ['in', 'with'],
+        'N': ['cat', 'dog', 'beer', 'cake', 'juice', 'meat', 'soup', 'fork', 'knife', 'oven', 'spoon'],
+        'DET': ['a', 'the']
+    }
 
-    # variables = ['S',
-    #             # 'T', 'J'
-    #             ]
+    # variables = ['S']
     # terminales = ['a', 'b']
     # rules = {
     #     'S': ['a S a', 'b S b', 'a', 'b', 'epsilon'],
-    #     # 'T': ['b S b S', 'epsilon'],
-    #     # 'J': ['a T b'],
     # }
 
     # variables = ['S', 'C']
@@ -310,15 +327,15 @@ def main():
     #     'C': 'a C b'
     # }
 
-    variables = ['S', 'A', 'B']
-    terminales = ['a', 'b']
-    rules = {
-        'S': ['A S A', 'a B', 'b', 'a', 'S A', 'A S'],
-        'A': 'b',
-        'B': 'b',
-    }
+    # variables = ['S', 'A', 'B']
+    # terminales = ['a', 'b']
+    # rules = {
+    #     'S': ['A S A', 'a B', 'b', 'a', 'S A', 'A S'],
+    #     'A': 'b',
+    #     'B': 'b',
+    # }
 
-    CFG(variables, terminales, rules)
+    variables, rules = CFG(variables, terminales, rules)
 
     print('Variables')
     print(variables)
