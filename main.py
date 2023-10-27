@@ -1,4 +1,5 @@
 #Lista de todas las letra del alfabeto en mayuscula
+import cyk as cykAlgorithm
 
 def CFG(variables, terminales, rules):
     # Paso 1: Agregar reemplazar paso inicial
@@ -343,5 +344,23 @@ def main():
     for e in rules:
         print(e, ':', rules[e])
 
+    listRules = []
+    # Tranformacion a lista para algoritmo CYK
+    for rule in rules:
+        if type(rules[rule]) == list:
+            for r in rules[rule]:
+                listRules.append((rule, r))
+        else:
+            listRules.append((rule, rules[rule]))
+
+    # print('Lista de reglas')
+    # for thing in listRules:
+    #     print(thing)
+
+    try:
+        print('CYK')
+        cykAlgorithm.main(listRules, 'she cooks a cake with a dog')
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
 
 main()
