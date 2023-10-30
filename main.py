@@ -248,10 +248,6 @@ def CFG(variables, terminales, rules):
                     alcanzables = agregarLetras(letra, alcanzables, rules)
     
 
-
-    print('Alcanzables')
-    print(alcanzables)
-
     # Eliminar variables no alcanzables
     rul = rules.copy()
     for i in rul:
@@ -300,6 +296,7 @@ def agregarLetras(letra, alcanzables, rules):
     return alcanzables
 
 def main():
+
     variables = ['S', 'A', 'B', 'VP', 'PP', 'NP', 'V', 'P', 'N', 'DET']
     terminales = ['he', 'she', 'cooks', 'drinks', 'eats', 'cuts', 'in', 'with', 'cat', 'dog', 'beer', 'cake', 'juice', 'meat', 'soup', 'fork', 'knife', 'oven', 'spoon', 'a', 'the']
     rules = { 
@@ -312,40 +309,20 @@ def main():
         'V': ['cooks', 'drinks', 'eats', 'cuts'],
         'P': ['in', 'with'],
         'N': ['cat', 'dog', 'beer', 'cake', 'juice', 'meat', 'soup', 'fork', 'knife', 'oven', 'spoon'],
-        'DET': ['a', 'the']
+        'DET': ['a', 'the', 'an']
     }
-
-    # variables = ['S']
-    # terminales = ['a', 'b']
-    # rules = {
-    #     'S': ['a S a', 'b S b', 'a', 'b', 'epsilon'],
-    # }
-
-    # variables = ['S', 'C']
-    # terminales = ['a', 'b']
-    # rules = {
-    #     'S': ['a S', 'a', 'a C b'],
-    #     'C': 'a C b'
-    # }
-
-    # variables = ['S', 'A', 'B']
-    # terminales = ['a', 'b']
-    # rules = {
-    #     'S': ['A S A', 'a B', 'b', 'a', 'S A', 'A S'],
-    #     'A': 'b',
-    #     'B': 'b',
-    # }
+    input_phrase = 'the dog drinks a spoon in a beer'
 
     variables, rules = CFG(variables, terminales, rules)
 
-    print('Variables')
-    print(variables)
-    print('Reglas')
-    for e in rules:
-        print(e, ':', rules[e])
+    # print('Variables')
+    # print(variables)
+    # print('Reglas')
+    # for e in rules:
+    #     print(e, ':', rules[e])
 
-    listRules = []
     # Tranformacion a lista para algoritmo CYK
+    listRules = []
     for rule in rules:
         if type(rules[rule]) == list:
             for r in rules[rule]:
@@ -353,14 +330,30 @@ def main():
         else:
             listRules.append((rule, rules[rule]))
 
-    # print('Lista de reglas')
-    # for thing in listRules:
-    #     print(thing)
 
-    try:
-        print('CYK')
-        cykAlgorithm.main(listRules, 'she cooks a cake with a dog')
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
+    print('CYK')
+    input_phrase = 'she cooks a cake in the oven'
+    print('Frase semánticamente correcta 1:', input_phrase)
+    cykAlgorithm.main(listRules, input_phrase)
+
+    # input_phrase = 'he cuts a meat with a knife'
+    # print('Frase semánticamente correcta 2:', input_phrase)
+    # cykAlgorithm.main(listRules, input_phrase)
+
+    # input_phrase = 'a cat drinks a cake with an oven'
+    # print('Frase semánticamente incorrecta 1:', input_phrase)
+    # cykAlgorithm.main(listRules, input_phrase)
+
+    # input_phrase = 'the dog drinks a spoon in a beer'
+    # print('Frase semánticamente incorrecta 2:', input_phrase)
+    # cykAlgorithm.main(listRules, input_phrase)
+
+    # input_phrase = 'he eat cake'
+    # print('Frase no perteneciente al lenguaje 1:', input_phrase)
+    # cykAlgorithm.main(listRules, input_phrase)
+
+    # input_phrase = 'dog cut beer'
+    # print('Frase no perteneciente al lenguaje 2:', input_phrase)
+    # cykAlgorithm.main(listRules, input_phrase)
 
 main()
