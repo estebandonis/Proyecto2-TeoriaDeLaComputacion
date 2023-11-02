@@ -123,6 +123,3 @@ def print_syntax_tree(node, indent):
         print(" " * indent + node.label)
         for child in node.children:
             print_syntax_tree(child, indent + 2)
-
-
-# main()

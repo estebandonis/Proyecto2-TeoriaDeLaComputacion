@@ -16,7 +16,7 @@ def CFG(variables, terminales, rules):
     variables = newVariables
 
     # Paso 2: BIN
-    # Quitar terminales con Variables
+    # Quitar reglas que contengan un terminales con no terminales
     rul = rules.copy()
     for i in rul:
         transition = rul[i]
@@ -30,11 +30,6 @@ def CFG(variables, terminales, rules):
                     while numChar < len(strin):
                         char = strin[numChar]
                         if char.islower():
-                            # for k in rules:
-                            #     if char.upper() != k:
-                            #         strin[numChar] = k
-                            #         break
-                            # strin[numChar] = ''
                             rules[char.upper()] = char
                             strin[numChar] = char.upper()
                             if char.upper() not in variables:
@@ -56,11 +51,6 @@ def CFG(variables, terminales, rules):
                         while numChar < len(strin):
                             char = strin[numChar]
                             if char.islower():
-                                # for k in rules:
-                                #     if char.upper() != k:
-                                #         strin[numChar] = k
-                                #         break
-                                # strin[numChar] = ''
                                 rules[char.upper()] = char
                                 strin[numChar] = char.upper()
                                 if char.upper() not in variables:
@@ -75,11 +65,6 @@ def CFG(variables, terminales, rules):
                     while numChar < len(strin):
                         char = strin[numChar]
                         if char.islower():
-                            # for k in rules:
-                            #     if char.upper() != k:
-                            #         strin[numChar] = k
-                            #         break
-                            # strin[numChar] = ''
                             rules[char.upper()] = char
                             strin[numChar] = char.upper()
                             if char.upper() not in variables:
@@ -89,7 +74,7 @@ def CFG(variables, terminales, rules):
                     rules[i] = ''.join(strin)
 
 
-    # Quitar mas de 2 variables
+    # Quitar reglas con más de 2 no terminales
     noMasdeTres = False
     prueba = 0
     while noMasdeTres == False:
@@ -274,7 +259,8 @@ def CFG(variables, terminales, rules):
                     variables.remove(let)
 
     return variables, rules
-    
+
+# Funcion recursiva para agregar letras alcanzables    
 def agregarLetras(letra, alcanzables, rules):
     if letra.isupper() and letra not in alcanzables:
         alcanzables.append(letra)
@@ -311,15 +297,8 @@ def main():
         'N': ['cat', 'dog', 'beer', 'cake', 'juice', 'meat', 'soup', 'fork', 'knife', 'oven', 'spoon'],
         'DET': ['a', 'the', 'an']
     }
-    input_phrase = 'the dog drinks a spoon in a beer'
 
     variables, rules = CFG(variables, terminales, rules)
-
-    # print('Variables')
-    # print(variables)
-    # print('Reglas')
-    # for e in rules:
-    #     print(e, ':', rules[e])
 
     # Tranformacion a lista para algoritmo CYK
     listRules = []
@@ -332,9 +311,9 @@ def main():
 
 
     print('CYK')
-    input_phrase = 'she cooks a cake in the oven'
-    print('Frase semánticamente correcta 1:', input_phrase)
-    cykAlgorithm.main(listRules, input_phrase)
+    # input_phrase = 'she cooks a cake in the oven'
+    # print('Frase semánticamente correcta 1:', input_phrase)
+    # cykAlgorithm.main(listRules, input_phrase)
 
     # input_phrase = 'he cuts a meat with a knife'
     # print('Frase semánticamente correcta 2:', input_phrase)
@@ -352,8 +331,8 @@ def main():
     # print('Frase no perteneciente al lenguaje 1:', input_phrase)
     # cykAlgorithm.main(listRules, input_phrase)
 
-    # input_phrase = 'dog cut beer'
-    # print('Frase no perteneciente al lenguaje 2:', input_phrase)
-    # cykAlgorithm.main(listRules, input_phrase)
+    input_phrase = 'dog cut beer'
+    print('Frase no perteneciente al lenguaje 2:', input_phrase)
+    cykAlgorithm.main(listRules, input_phrase)
 
 main()
